@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0084ff">
+<title>Messenger</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script>tailwind.config={darkMode:"class"};</script>
+<style>
+html,body{height:100%;margin:0}body{font-family:system-ui,sans-serif}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#aaa;border-radius:9px}
+@media(max-width:700px){#sidebar{width:100%}#chat{display:none}body.chat-open #sidebar{display:none}body.chat-open #chat{display:flex}}
+</style>
+</head>
+<body class="h-screen overflow-hidden bg-white dark:bg-gray-950 text-gray-900 dark:text-white">
+
+<!-- Login / Sign up -->
+<section id="auth" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-100 dark:bg-gray-950 p-5">
+<div class="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl shadow-2xl p-6">
+<div class="text-center mb-6">
+<div class="mx-auto w-16 h-16 rounded-full bg-blue-500 text-white flex items-center justify-center text-3xl mb-3"><i class="fa-brands fa-facebook-messenger"></i></div>
+<h1 id="authTitle" class="text-2xl font-bold">Messenger</h1>
+<p id="authSub" class="text-sm text-gray-500 mt-1">আপনার অ্যাকাউন্টে লগইন করুন</p>
+</div>
+<form id="authForm" class="space-y-3">
+<input id="name" class="hidden w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-800 outline-none" placeholder="আপনার নাম">
+<input id="email" type="email" required class="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-800 outline-none" placeholder="ইমেইল">
+<input id="password" type="password" minlength="6" required class="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-800 outline-none" placeholder="পাসওয়ার্ড">
+<button id="authButton" class="w-full p-3 rounded-xl bg-blue-500 text-white font-semibold">লগইন</button>
+</form>
+<button id="forgot" class="w-full mt-4 text-sm text-blue-500">পাসওয়ার্ড ভুলে গেছেন?</button>
+<div class="text-center mt-4 text-sm text-gray-500"><span id="switchText">অ্যাকাউন্ট নেই?</span> <button id="switch" class="text-blue-500 font-semibold">সাইন আপ করুন</button></div>
+<p id="error" class="text-red-500 text-sm text-center mt-3"></p>
+</div></section>
+
+<!-- Profile -->
+<div id="profileModal" class="hidden fixed inset-0 z-40 bg-black/60 items-center justify-center p-5">
+<div class="w-full max-w-sm bg-white dark:bg-gray-900 rounded-3xl p-6">
+<div class="flex justify-between mb-5"><h2 class="text-xl font-bold">প্রোফাইল</h2><button id="closeProfile">✕</button></div>
+<img id="profilePreview" class="w-24 h-24 rounded-full object-cover mx-auto mb-4" src="https://i.pravatar.cc/100">
+<input id="profileName" class="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-800 mb-3 outline-none" placeholder="নাম">
+<input id="profilePhoto" class="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-800 mb-4 outline-none" placeholder="ছবির URL (ঐচ্ছিক)">
+<button id="saveProfile" class="w-full p-3 rounded-xl bg-blue-500 text-white font-semibold">Save</button>
+</div></div>
+
+<!-- App -->
+<main id="app" class="hidden h-full">
+<aside id="sidebar" class="w-[360px] border-r dark:border-gray-800 bg-white dark:bg-gray-900 flex flex-col">
+<header class="p-4 border-b dark:border-gray-800">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3"><img id="meImg" class="w-11 h-11 rounded-full object-cover"><div><b id="meName">Messenger</b><div class="text-xs text-green-500">Online</div></div></div>
+<div class="flex gap-3 text-gray-500"><button id="profileBtn"><i class="fa-solid fa-user-gear"></i></button><button id="dark"><i class="fa-solid fa-moon"></i></button><button id="logout"><i class="fa-solid fa-right-from-bracket"></i></button></div>
+</div>
+<div class="mt-4 relative"><i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i><input id="search" class="w-full pl-11 p-3 rounded-full bg-gray-100 dark:bg-gray-800 outline-none" placeholder="মানুষ খুঁজুন..."></div>
+</header>
+<div id="users" class="flex-1 overflow-y-auto"></div>
+</aside>
+
+<section id="chat" class="flex-1 flex-col bg-gray-50 dark:bg-gray-950">
+<header class="h-[72px] p-3 border-b dark:border-gray-800 bg-white dark:bg-gray-900 flex items-center gap-3">
+<button id="back" class="text-gray-500"><i class="fa-solid fa-arrow-left"></i></button>
+<img id="chatImg" class="w-11 h-11 rounded-full object-cover">
+<div><b id="chatName">একজন ব্যবহারকারী নির্বাচন করুন</b><div id="chatStatus" class="text-xs text-gray-500">চ্যাট শুরু করতে একজনকে নির্বাচন করুন</div></div>
+</header>
+<div id="messages" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
+<form id="sendForm" class="p-3 border-t dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-2">
+<input id="message" disabled class="flex-1 min-w-0 p-3 rounded-full bg-gray-100 dark:bg-gray-800 outline-none" placeholder="একটি মেসেজ লিখুন...">
+<button id="send" disabled class="w-12 h-12 rounded-full bg-blue-500 text-white disabled:opacity-40"><i class="fa-solid fa-paper-plane"></i></button>
+</form>
+</section>
+</main>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import{getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,sendPasswordResetEmail,signOut,onAuthStateChanged,updateProfile}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import{getFirestore,collection,doc,setDoc,getDoc,addDoc,deleteDoc,query,orderBy,onSnapshot,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyBLw3kGNaKB9JCzN_mW8sS1Yv7cpp6SvhU",
+authDomain:"messenger-app-2e8b1.firebaseapp.com",
+projectId:"messenger-app-2e8b1",
+storageBucket:"messenger-app-2e8b1.firebasestorage.app",
+messagingSenderId:"913049885136",
+appId:"1:913049885136:web:cc07e7ee59faaee91b41d5",
+measurementId:"G-ED5NDMYXRS"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const $=id=>document.getElementById(id); let signup=false,me=null,active=null,users=[],stopUsers=null,stopMessages=null;
+
+const avatar=u=>u?.photoURL||"https://i.pravatar.cc/100?u="+(u?.uid||"x");
+const cid=(a,b)=>[a,b].sort().join("_");
+const esc=s=>String(s??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[x]));
+
+$("switch").onclick=()=>{signup=!signup;$("name").classList.toggle("hidden",!signup);$("authTitle").textContent=signup?"সাইন আপ করুন":"Messenger";$("authSub").textContent=signup?"নতুন অ্যাকাউন্ট তৈরি করুন":"আপনার অ্যাকাউন্টে লগইন করুন";$("authButton").textContent=signup?"সাইন আপ":"লগইন";$("switchText").textContent=signup?"আগেই অ্যাকাউন্ট আছে?":"অ্যাকাউন্ট নেই?";$("switch").textContent=signup?"লগইন করুন":"সাইন আপ করুন";$("error").textContent=""};
+
+$("forgot").onclick=async()=>{let e=$("email").value.trim();if(!e)return alert("আগে ইমেইল লিখুন।");try{await sendPasswordResetEmail(auth,e);alert("Password reset email পাঠানো হয়েছে।")}catch(x){alert(x.message)}};
+
+$("authForm").onsubmit=async e=>{
+e.preventDefault();$("error").textContent="";
+try{
+if(signup){
+let n=$("name").value.trim()||$("email").value.split("@")[0];
+let c=await createUserWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);
+await updateProfile(c.user,{displayName:n});
+await setDoc(doc(db,"users",c.user.uid),{uid:c.user.uid,name:n,email:c.user.email,photoURL:"",createdAt:serverTimestamp()},{merge:true});
+}else await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);
+}catch(x){$("error").textContent=x.message}
+};
+
+async function loadMe(u){
+me=u;let r=doc(db,"users",u.uid),s=await getDoc(r);
+if(!s.exists())await setDoc(r,{uid:u.uid,name:u.displayName||u.email.split("@")[0],email:u.email,photoURL:u.photoURL||"",createdAt:serverTimestamp()},{merge:true});
+let d=(await getDoc(r)).data();$("meName").textContent=d.name;$("meImg").src=avatar(d);
+}
+
+function renderUsers(){
+let t=$("search").value.trim().toLowerCase();
+let list=users.filter(u=>(u.name||"").toLowerCase().includes(t)||(u.email||"").toLowerCase().includes(t));
+$("users").innerHTML=list.length?list.map(u=>`<button data-id="${esc(u.uid)}" class="w-full text-left p-4 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-800 border-b dark:border-gray-800"><img src="${esc(avatar(u))}" class="w-12 h-12 rounded-full object-cover"><span><b class="block">${esc(u.name||"User")}</b><small class="text-gray-500">${esc(u.email||"")}</small></span></button>`).join(""):`<div class="p-6 text-center text-gray-500">${t?"কোনো user পাওয়া যায়নি":"অন্য কেউ সাইন আপ করলে এখানে দেখা যাবে"}</div>`;
+$("users").querySelectorAll("button").forEach(b=>b.onclick=()=>openChat(users.find(u=>u.uid===b.dataset.id)));
+}
+$("search").oninput=renderUsers;
+
+function startUsers(){
+if(stopUsers)stopUsers();
+stopUsers=onSnapshot(collection(db,"users"),s=>{users=s.docs.map(x=>x.data()).filter(u=>u.uid!==me.uid);renderUsers()},e=>console.error(e));
+}
+
+async function openChat(u){
+active=u;$("chatName").textContent=u.name||"User";$("chatImg").src=avatar(u);$("chatStatus").textContent=u.email||"";
+$("message").disabled=false;$("send").disabled=false;document.body.classList.add("chat-open");
+if(stopMessages)stopMessages();
+let q=query(collection(db,"chats",cid(me.uid,u.uid),"messages"),orderBy("createdAt","asc"));
+stopMessages=onSnapshot(q,s=>{ $("messages").innerHTML="";s.forEach(x=>drawMessage(x.id,x.data()));$("messages").scrollTop=$("messages").scrollHeight},
+e=>$("messages").innerHTML='<div class="text-center text-red-500 p-5">মেসেজ লোড করা যায়নি। Rules চেক করুন।</div>');
+}
+
+function drawMessage(id,m){
+let mine=m.senderId===me.uid,w=document.createElement("div");w.className="flex "+(mine?"justify-end":"justify-start");
+let b=document.createElement("div");b.className="relative max-w-[78%] px-4 py-2 rounded-2xl "+(mine?"bg-blue-500 text-white":"bg-white dark:bg-gray-800 shadow");
+let tm=m.createdAt?.toDate?m.createdAt.toDate().toLocaleTimeString("bn-BD",{hour:"numeric",minute:"2-digit"}):"";
+b.innerHTML=`<div class="whitespace-pre-wrap break-words">${esc(m.text)}</div><div class="text-[10px] opacity-60 text-right">${esc(tm)}</div>`;
+if(mine){let d=document.createElement("button");d.className="absolute -left-7 top-1 text-gray-400";d.innerHTML='<i class="fa-solid fa-trash"></i>';d.onclick=async()=>{if(confirm("মেসেজ মুছবেন?"))await deleteDoc(doc(db,"chats",cid(me.uid,active.uid),"messages",id))};w.appendChild(d)}
+w.appendChild(b);$("messages").appendChild(w);
+}
+
+$("sendForm").onsubmit=async e=>{
+e.preventDefault();let t=$("message").value.trim();if(!t||!active)return;$("message").value="";
+try{await addDoc(collection(db,"chats",cid(me.uid,active.uid),"messages"),{senderId:me.uid,receiverId:active.uid,text:t,createdAt:serverTimestamp()})}catch(x){alert(x.message)}
+};
+$("message").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("sendForm").requestSubmit()}};
+$("logout").onclick=()=>signOut(auth);
+$("back").onclick=()=>document.body.classList.remove("chat-open");
+$("dark").onclick=()=>{document.documentElement.classList.toggle("dark");localStorage.dark=document.documentElement.classList.contains("dark")?"1":"0"};
+if(localStorage.dark==="1")document.documentElement.classList.add("dark");
+
+$("profileBtn").onclick=async()=>{let d=(await getDoc(doc(db,"users",me.uid))).data()||{};$("profileName").value=d.name||"";$("profilePhoto").value=d.photoURL||"";$("profilePreview").src=avatar(d);$("profileModal").classList.remove("hidden");$("profileModal").classList.add("flex")};
+$("closeProfile").onclick=()=>{$("profileModal").classList.add("hidden");$("profileModal").classList.remove("flex")};
+$("saveProfile").onclick=async()=>{
+let n=$("profileName").value.trim()||me.email.split("@")[0],p=$("profilePhoto").value.trim();
+await setDoc(doc(db,"users",me.uid),{uid:me.uid,name:n,email:me.email,photoURL:p},{merge:true});await updateProfile(me,{displayName:n,photoURL:p});
+$("meName").textContent=n;$("meImg").src=avatar({uid:me.uid,photoURL:p});$("closeProfile").click();
+};
+
+onAuthStateChanged(auth,async u=>{
+if(u){$("auth").classList.add("hidden");$("app").classList.remove("hidden");await loadMe(u);startUsers()}
+else{$("app").classList.add("hidden");$("auth").classList.remove("hidden");if(stopUsers)stopUsers();if(stopMessages)stopMessages()}
+});
+</script>
+</body>
+</html>
