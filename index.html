@@ -1,260 +1,108 @@
-<!DOCTYPE html>
-<html lang="bn">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0084ff">
 <title>Messenger</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<script>tailwind.config={darkMode:"class"};</script>
 <style>
-html,body{height:100%;margin:0}body{font-family:system-ui,sans-serif}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#aaa;border-radius:9px}
-@media(max-width:700px){#sidebar{width:100%}#chat{display:none}body.chat-open #sidebar{display:none}body.chat-open #chat{display:flex}}
-.message-row:hover .actions{opacity:1}.actions{opacity:.35}
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Arial,sans-serif}
+body{background:#fff;color:#111;overflow:hidden}button,input,textarea{font:inherit}
+button{border:0;cursor:pointer}.hidden{display:none!important}
+#auth{height:100%;display:grid;place-items:center;padding:20px}.authbox{width:min(400px,100%);text-align:center}
+.logo{width:72px;height:72px;border-radius:50%;background:#0084ff;color:#fff;display:grid;place-items:center;font-size:40px;font-weight:700;margin:auto auto 16px}
+.authbox h1{color:#0084ff;margin:0 0 8px}.authbox p{color:#666}.field{width:100%;padding:14px;border:1px solid #ddd;border-radius:12px;margin:6px 0;outline:none;background:#f5f6f7}
+.primary{width:100%;padding:14px;background:#0084ff;color:#fff;border-radius:12px;font-weight:700;margin-top:8px}
+.link{display:block;color:#0084ff;margin:15px 0;cursor:pointer}
+#app{height:100%;display:flex}.side{width:350px;border-right:1px solid #ddd;display:flex;flex-direction:column;background:#fff}
+.sidehead{padding:14px;display:flex;justify-content:space-between;align-items:center}.sidehead h2{margin:0;font-size:26px}
+.icon{width:40px;height:40px;border-radius:50%;background:#eee;margin-left:4px}.search{padding:0 14px 10px}.search input{width:100%;border:0;background:#f0f2f5;border-radius:22px;padding:12px 15px;outline:0}
+.me{display:flex;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid #eee}.avatar{width:48px;height:48px;border-radius:50%;background:#0084ff;color:#fff;display:grid;place-items:center;font-weight:700;overflow:hidden;flex:none}.avatar img{width:100%;height:100%;object-fit:cover}.meinfo{flex:1}.chatlist{overflow:auto;flex:1}.chatitem{display:flex;gap:10px;padding:11px 14px;align-items:center}.chatitem:hover,.chatitem.active{background:#f0f2f5}.chatinfo{min-width:0;flex:1}.chatinfo b,.chatinfo span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chatinfo span{font-size:13px;color:#666}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}.chathead{height:70px;border-bottom:1px solid #ddd;display:flex;align-items:center;gap:10px;padding:10px 14px}.chatwho{flex:1}.online{font-size:12px;color:#31a24c}.messages{flex:1;overflow:auto;padding:18px;background:#fff}.msg{display:flex;margin:7px 0}.msg.mine{justify-content:flex-end}.bubble{max-width:min(78%,460px);background:#e4e6eb;border-radius:18px;padding:9px 13px;overflow-wrap:anywhere}.mine .bubble{background:#0084ff;color:#fff}.meta{font-size:10px;opacity:.65;margin-top:3px}.composer{display:flex;gap:7px;align-items:center;padding:9px;border-top:1px solid #ddd}.composer input{flex:1;border:0;background:#f0f2f5;border-radius:22px;padding:12px 15px;outline:0}.send{width:44px;height:44px;border-radius:50%;background:#0084ff;color:#fff}.file{display:none}
+.modal{position:fixed;inset:0;background:#0008;display:grid;place-items:center;padding:20px;z-index:20}.modalbox{width:min(420px,100%);background:#fff;border-radius:18px;padding:20px;max-height:90vh;overflow:auto}.modalbox h3{margin-top:0}
+#privacy{position:fixed;inset:0;background:#fff;z-index:30;display:none;place-items:center;padding:20px;text-align:center}.privacybox{width:min(360px,100%)}
+.dark{background:#18191a;color:#eee}.dark #app,.dark .side,.dark .main,.dark .messages,.dark #auth,.dark .modalbox,.dark #privacy{background:#18191a;color:#eee}.dark .search input,.dark .composer input,.dark .icon{background:#3a3b3c;color:#fff}.dark .chatitem:hover,.dark .chatitem.active{background:#303030}.dark .bubble{background:#3a3b3c}.dark .chathead,.dark .composer,.dark .side,.dark .me{border-color:#3a3b3c}
+@media(max-width:700px){.side{width:100%}.main{display:none}.openchat .side{display:none}.openchat .main{display:flex}.mobileback{display:block!important}}
+@media(min-width:701px){.mobileback{display:none}}
 </style>
 </head>
-<body class="h-screen overflow-hidden bg-white dark:bg-gray-950 text-gray-900 dark:text-white">
+<body>
+<div id="auth">
+<div class="authbox">
+<div class="logo">M</div><h1>Messenger</h1><p>Firebase Messenger</p>
+<div id="loginBox">
+<input id="email" class="field" type="email" placeholder="Email">
+<input id="password" class="field" type="password" placeholder="Password">
+<button id="login" class="primary">Log in</button>
+<span id="forgot" class="link">Forgot password?</span><span id="toSignup" class="link">Create new account</span>
+</div>
+<div id="signupBox" class="hidden">
+<input id="name" class="field" placeholder="Name">
+<input id="sEmail" class="field" type="email" placeholder="Email">
+<input id="sPassword" class="field" type="password" placeholder="Password (6+ characters)">
+<button id="signup" class="primary">Sign up</button><span id="toLogin" class="link">Already have an account?</span>
+</div>
+</div></div>
 
-<section id="auth" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-100 dark:bg-gray-950 p-5">
-<div class="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl shadow-2xl p-6">
-<div class="text-center mb-6">
-<div class="mx-auto w-16 h-16 rounded-full bg-blue-500 text-white flex items-center justify-center text-3xl mb-3"><i class="fa-brands fa-facebook-messenger"></i></div>
-<h1 id="authTitle" class="text-2xl font-bold">Messenger</h1>
-<p id="authSub" class="text-sm text-gray-500 mt-1">আপনার অ্যাকাউন্টে লগইন করুন</p>
-</div>
-<form id="authForm" class="space-y-3">
-<input id="name" class="hidden w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-800 outline-none" placeholder="আপনার নাম">
-<input id="email" type="email" required class="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-800 outline-none" placeholder="ইমেইল">
-<input id="password" type="password" minlength="6" required class="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-800 outline-none" placeholder="পাসওয়ার্ড">
-<button id="authButton" class="w-full p-3 rounded-xl bg-blue-500 text-white font-semibold">লগইন</button>
-</form>
-<button id="forgot" class="w-full mt-4 text-sm text-blue-500">পাসওয়ার্ড ভুলে গেছেন?</button>
-<div class="text-center mt-4 text-sm text-gray-500"><span id="switchText">অ্যাকাউন্ট নেই?</span> <button id="switch" class="text-blue-500 font-semibold">সাইন আপ করুন</button></div>
-<p id="error" class="text-red-500 text-sm text-center mt-3"></p>
-</div>
-</section>
-
-<div id="profileModal" class="hidden fixed inset-0 z-40 bg-black/60 items-center justify-center p-5">
-<div class="w-full max-w-sm bg-white dark:bg-gray-900 rounded-3xl p-6">
-<div class="flex justify-between mb-5"><h2 class="text-xl font-bold">প্রোফাইল</h2><button id="closeProfile">✕</button></div>
-<img id="profilePreview" class="w-24 h-24 rounded-full object-cover mx-auto mb-4" src="https://i.pravatar.cc/100">
-<input id="profileName" class="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-800 mb-3 outline-none" placeholder="নাম">
-<input id="profilePhoto" class="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-800 mb-4 outline-none" placeholder="ছবির URL (ঐচ্ছিক)">
-<button id="saveProfile" class="w-full p-3 rounded-xl bg-blue-500 text-white font-semibold">Save</button>
-</div>
-</div>
-
-<main id="app" class="hidden h-full">
-<aside id="sidebar" class="w-[360px] border-r dark:border-gray-800 bg-white dark:bg-gray-900 flex flex-col">
-<header class="p-4 border-b dark:border-gray-800">
-<div class="flex items-center justify-between">
-<div class="flex items-center gap-3">
-<img id="meImg" class="w-11 h-11 rounded-full object-cover">
-<div><b id="meName">Messenger</b><div class="text-xs text-green-500">● Online</div></div>
-</div>
-<div class="flex gap-3 text-gray-500">
-<button id="profileBtn" title="Profile"><i class="fa-solid fa-user-gear"></i></button>
-<button id="notifyBtn" title="Notifications"><i class="fa-solid fa-bell"></i></button>
-<button id="dark" title="Dark mode"><i class="fa-solid fa-moon"></i></button>
-<button id="logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
-</div>
-</div>
-<div class="mt-4 relative">
-<i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
-<input id="search" class="w-full pl-11 p-3 rounded-full bg-gray-100 dark:bg-gray-800 outline-none" placeholder="মানুষ খুঁজুন...">
-</div>
-</header>
-<div id="users" class="flex-1 overflow-y-auto"></div>
+<div id="app" class="hidden">
+<aside class="side">
+<div class="sidehead"><h2>Chats</h2><div><button class="icon" id="profileBtn">👤</button><button class="icon" id="privacyBtn">🔒</button><button class="icon" id="darkBtn">🌙</button></div></div>
+<div class="search"><input id="search" placeholder="Search users"></div>
+<div class="me"><div class="avatar" id="myAvatar">U</div><div class="meinfo"><b id="myName">User</b><small>Active</small></div><button class="icon" id="logout">↪</button></div>
+<div id="chatlist" class="chatlist"></div>
 </aside>
+<main class="main">
+<div class="chathead"><button id="back" class="icon mobileback">←</button><div class="avatar" id="chatAvatar">?</div><div class="chatwho"><b id="chatName">Select a user</b><div id="chatPresence" class="online"></div><small id="typing"></small></div><button class="icon" title="Voice">📞</button><button class="icon" title="Video">🎥</button></div>
+<div id="messages" class="messages"><div style="text-align:center;color:#777;margin-top:30vh">Search a user to start a chat.</div></div>
+<div class="composer"><label class="icon">📷<input id="image" class="file" type="file" accept="image/*"></label><label class="icon">📎<input id="file" class="file" type="file"></label><button class="icon" id="voice">🎤</button><input id="text" placeholder="Type a message..." disabled><button id="send" class="send" disabled>➤</button></div>
+</main></div>
 
-<section id="chat" class="flex-1 flex-col bg-gray-50 dark:bg-gray-950">
-<header class="h-[72px] p-3 border-b dark:border-gray-800 bg-white dark:bg-gray-900 flex items-center gap-3">
-<button id="back" class="text-gray-500"><i class="fa-solid fa-arrow-left"></i></button>
-<img id="chatImg" class="w-11 h-11 rounded-full object-cover">
-<div class="min-w-0 flex-1"><b id="chatName">একজন ব্যবহারকারী নির্বাচন করুন</b><div id="chatStatus" class="text-xs text-gray-500">চ্যাট শুরু করতে একজনকে নির্বাচন করুন</div></div>
-<button id="chatSearchBtn" class="text-gray-500"><i class="fa-solid fa-magnifying-glass"></i></button>
-</header>
-<div id="chatSearchBox" class="hidden p-2 bg-white dark:bg-gray-900 border-b dark:border-gray-800">
-<input id="messageSearch" class="w-full p-2 rounded-xl bg-gray-100 dark:bg-gray-800 outline-none" placeholder="এই chat-এর message খুঁজুন...">
-</div>
-<div id="messages" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
-<div id="typing" class="hidden px-4 pb-1 text-xs text-gray-500">typing…</div>
-<form id="sendForm" class="p-3 border-t dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-2">
-<button type="button" id="emojiBtn" class="w-11 h-11 rounded-full text-gray-500"><i class="fa-regular fa-face-smile"></i></button>
-<input id="message" disabled class="flex-1 min-w-0 p-3 rounded-full bg-gray-100 dark:bg-gray-800 outline-none" placeholder="একটি মেসেজ লিখুন...">
-<button id="send" disabled class="w-12 h-12 rounded-full bg-blue-500 text-white disabled:opacity-40"><i class="fa-solid fa-paper-plane"></i></button>
-</form>
-<div id="emojiPanel" class="hidden bg-white dark:bg-gray-900 border-t dark:border-gray-800 p-2 text-2xl break-words leading-10">😀 😃 😄 😁 😆 😅 😂 🙂 😉 😊 😍 🥰 😘 😎 🤔 😢 😭 😡 👍 👎 ❤️ 💙 💚 💛 😂 🎉 🔥 🙏</div>
-</section>
-</main>
+<div id="modal" class="modal hidden"><div class="modalbox"><h3 id="modalTitle">Profile</h3><div id="modalBody"></div><button id="closeModal" class="primary">Close</button></div></div>
+<div id="privacy" class="privacybox"><div class="logo">🔒</div><h2>Privacy Mode</h2><p>App locked</p><input id="unlockPin" class="field" inputmode="numeric" maxlength="6" placeholder="PIN"><button id="unlock" class="primary">Unlock</button></div>
 
 <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import{getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,sendPasswordResetEmail,signOut,onAuthStateChanged,updateProfile}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import{getFirestore,collection,doc,setDoc,getDoc,addDoc,deleteDoc,updateDoc,query,orderBy,onSnapshot,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import{getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,sendPasswordResetEmail,updateProfile}from"https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import{getFirestore,collection,doc,setDoc,getDoc,query,where,orderBy,onSnapshot,addDoc,serverTimestamp,limit,updateDoc}from"https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import{getStorage,ref,uploadBytes,getDownloadURL}from"https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
 
-const firebaseConfig={
-apiKey:"AIzaSyBLw3kGNaKB9JCzN_mW8sS1Yv7cpp6SvhU",
-authDomain:"messenger-app-2e8b1.firebaseapp.com",
-projectId:"messenger-app-2e8b1",
-storageBucket:"messenger-app-2e8b1.firebasestorage.app",
-messagingSenderId:"913049885136",
-appId:"1:913049885136:web:cc07e7ee59faaee91b41d5",
-measurementId:"G-ED5NDMYXRS"};
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
-const $=id=>document.getElementById(id);
-let signup=false,me=null,active=null,users=[],stopUsers=null,stopMessages=null,stopTyping=null,allMessages=[],replyTo=null;
+const firebaseConfig={apiKey:"AIzaSyBLw3kGNaKB9JCzN_mW8sS1Yv7cpp6SvhU",authDomain:"messenger-app-2e8b1.firebaseapp.com",projectId:"messenger-app-2e8b1",storageBucket:"messenger-app-2e8b1.firebasestorage.app",messagingSenderId:"913049885136",appId:"1:913049885136:web:cc07e7ee59faaee91b41d5",measurementId:"G-ED5NDMYXRS"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),storage=getStorage(app);
+const $=x=>document.getElementById(x);let me=null,active=null,unsubUsers=null,unsubMsgs=null,unsubPresence=null,unsubTyping=null;
+const esc=s=>{let d=document.createElement("div");d.textContent=s??"";return d.innerHTML};const cid=(a,b)=>[a,b].sort().join("_");
 
-const avatar=u=>u?.photoURL||("https://i.pravatar.cc/100?u="+(u?.uid||"x"));
-const cid=(a,b)=>[a,b].sort().join("_");
-const esc=s=>String(s??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[x]));
+$("toSignup").onclick=()=>{$("loginBox").classList.add("hidden");$("signupBox").classList.remove("hidden")};
+$("toLogin").onclick=()=>{$("signupBox").classList.add("hidden");$("loginBox").classList.remove("hidden")};
+$("signup").onclick=async()=>{try{let n=$("name").value.trim(),e=$("sEmail").value.trim(),p=$("sPassword").value;if(!n||!e||p.length<6)return alert("Fill all fields. Password must be 6+ characters.");let c=await createUserWithEmailAndPassword(auth,e,p);await updateProfile(c.user,{displayName:n});await setDoc(doc(db,"users",c.user.uid),{uid:c.user.uid,name:n,email:e,online:true,createdAt:serverTimestamp()},{merge:true})}catch(e){alert(e.message)}};
+$("login").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(e){alert(e.message)}};
+$("forgot").onclick=async()=>{let e=$("email").value.trim();if(!e)return alert("Enter email first.");try{await sendPasswordResetEmail(auth,e);alert("Password reset email sent.")}catch(x){alert(x.message)}};
+$("logout").onclick=()=>signOut(auth);
 
-$("switch").onclick=()=>{
-signup=!signup;$("name").classList.toggle("hidden",!signup);
-$("authTitle").textContent=signup?"সাইন আপ করুন":"Messenger";
-$("authSub").textContent=signup?"নতুন অ্যাকাউন্ট তৈরি করুন":"আপনার অ্যাকাউন্টে লগইন করুন";
-$("authButton").textContent=signup?"সাইন আপ":"লগইন";
-$("switchText").textContent=signup?"আগেই অ্যাকাউন্ট আছে?":"অ্যাকাউন্ট নেই?";
-$("switch").textContent=signup?"লগইন করুন":"সাইন আপ করুন";$("error").textContent="";
-};
+onAuthStateChanged(auth,async u=>{if(!u){me=null;$("auth").classList.remove("hidden");$("app").classList.add("hidden");return}me=u;$("auth").classList.add("hidden");$("app").classList.remove("hidden");$("myName").textContent=u.displayName||u.email;$("myAvatar").textContent=(u.displayName||u.email)[0].toUpperCase();await setDoc(doc(db,"users",u.uid),{uid:u.uid,name:u.displayName||"User",email:u.email,online:true,lastSeen:serverTimestamp()},{merge:true});listenUsers();});
+window.addEventListener("beforeunload",()=>{if(me)setDoc(doc(db,"users",me.uid),{online:false,lastSeen:serverTimestamp()},{merge:true})});
 
-$("forgot").onclick=async()=>{
-const e=$("email").value.trim();if(!e)return alert("আগে ইমেইল লিখুন।");
-try{await sendPasswordResetEmail(auth,e);alert("Password reset email পাঠানো হয়েছে।")}catch(x){alert(x.message)}
-};
+function listenUsers(){if(unsubUsers)unsubUsers();unsubUsers=onSnapshot(query(collection(db,"users"),limit(100)),s=>{let t=$("search").value.toLowerCase();$("chatlist").innerHTML="";s.forEach(d=>{let u=d.data();if(u.uid===me.uid)return;if(t&&!((u.name||"")+" "+(u.email||"")).toLowerCase().includes(t))return;let x=document.createElement("div");x.className="chatitem";x.innerHTML=`<div class="avatar">${esc((u.name||u.email||"?")[0].toUpperCase())}</div><div class="chatinfo"><b>${esc(u.name||"User")}</b><span>${esc(u.email||"")}</span></div>`;x.onclick=()=>openChat(u);$("chatlist").appendChild(x)})})}
+$("search").oninput=listenUsers;
 
-$("authForm").onsubmit=async e=>{
-e.preventDefault();$("error").textContent="";
-try{
-if(signup){
-const n=$("name").value.trim()||$("email").value.split("@")[0];
-const c=await createUserWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);
-await updateProfile(c.user,{displayName:n});
-await setDoc(doc(db,"users",c.user.uid),{uid:c.user.uid,name:n,email:c.user.email,photoURL:"",online:true,lastSeen:serverTimestamp(),createdAt:serverTimestamp()},{merge:true});
-}else await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);
-}catch(x){$("error").textContent=x.message}
-};
+async function openChat(u){active=u;document.body.classList.add("openchat");$("chatName").textContent=u.name||u.email;$("chatAvatar").textContent=(u.name||u.email)[0].toUpperCase();$("text").disabled=false;$("send").disabled=false;if(unsubMsgs)unsubMsgs();if(unsubPresence)unsubPresence();if(unsubTyping)unsubTyping();
+unsubPresence=onSnapshot(doc(db,"users",u.uid),d=>{let x=d.data()||{};$("chatPresence").textContent=x.online?"● Online":(x.lastSeen?"Last seen recently":"Offline")});
+let q=query(collection(db,"chats",cid(me.uid,u.uid),"messages"),orderBy("createdAt","asc"),limit(300));unsubMsgs=onSnapshot(q,s=>{$("messages").innerHTML="";s.forEach(d=>render(d.id,d.data()));$("messages").scrollTop=$("messages").scrollHeight})}
+function render(id,m){let r=document.createElement("div");r.className="msg"+(m.senderId===me.uid?" mine":"");let b=document.createElement("div");b.className="bubble";if(m.type==="image"){let im=document.createElement("img");im.src=m.url;im.style.maxWidth="240px";im.style.borderRadius="14px";b.appendChild(im)}else if(m.type==="file"){let a=document.createElement("a");a.href=m.url;a.target="_blank";a.textContent="📎 "+(m.name||"File");a.style.color="inherit";b.appendChild(a)}else if(m.type==="voice"){b.textContent="🎤 Voice message"}else b.textContent=m.text||"";let meta=document.createElement("div");meta.className="meta";meta.textContent=m.senderId===me.uid?(m.seen?"✓✓ Seen":m.delivered?"✓✓ Delivered":"✓ Sent"):"";b.appendChild(meta);if(m.senderId===me.uid){b.ondblclick=async()=>{if(confirm("Delete this message?"))await setDoc(doc(db,"chats",cid(me.uid,active.uid),"messages",id),{...m,deleted:true,text:"Message deleted"})}}r.appendChild(b);$("messages").appendChild(r)}
 
-async function loadMe(u){
-me=u;const r=doc(db,"users",u.uid);let s=await getDoc(r);
-if(!s.exists())await setDoc(r,{uid:u.uid,name:u.displayName||u.email.split("@")[0],email:u.email,photoURL:u.photoURL||"",online:true,lastSeen:serverTimestamp()},{merge:true});
-s=await getDoc(r);const d=s.data();$("meName").textContent=d.name;$("meImg").src=avatar(d);
-await setDoc(r,{online:true,lastSeen:serverTimestamp()},{merge:true});
-}
+async function send(text,type="text",extra={}){if(!active||(!text&&!extra.url))return;await addDoc(collection(db,"chats",cid(me.uid,active.uid),"messages"),{senderId:me.uid,receiverId:active.uid,text:text||"",type,delivered:false,seen:false,createdAt:serverTimestamp(),...extra})}
+$("send").onclick=()=>{let t=$("text").value.trim();if(t){$("text").value="";send(t)}};
+$("text").onkeydown=e=>{if(e.key==="Enter")$("send").click()};
+$("image").onchange=async e=>{let f=e.target.files[0];if(!f||!active)return;try{let r=ref(storage,`chatImages/${me.uid}/${Date.now()}_${f.name}`);await uploadBytes(r,f);send("", "image",{url:await getDownloadURL(r),name:f.name})}catch(x){alert(x.message)}e.target.value=""};
+$("file").onchange=async e=>{let f=e.target.files[0];if(!f||!active)return;try{let r=ref(storage,`chatFiles/${me.uid}/${Date.now()}_${f.name}`);await uploadBytes(r,f);send("", "file",{url:await getDownloadURL(r),name:f.name})}catch(x){alert(x.message)}e.target.value=""};
 
-function renderUsers(){
-const t=$("search").value.trim().toLowerCase();
-const list=users.filter(u=>(u.name||"").toLowerCase().includes(t)||(u.email||"").toLowerCase().includes(t));
-$("users").innerHTML=list.length?list.map(u=>`
-<button data-id="${esc(u.uid)}" class="w-full text-left p-4 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-800 border-b dark:border-gray-800">
-<div class="relative"><img src="${esc(avatar(u))}" class="w-12 h-12 rounded-full object-cover">
-<span class="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white dark:border-gray-900 ${u.online?"bg-green-500":"bg-gray-400"}"></span></div>
-<span class="min-w-0"><b class="block truncate">${esc(u.name||"User")}</b><small class="text-gray-500 block">${u.online?"Online":"Offline"} · ${esc(u.email||"")}</small></span>
-</button>`).join(""):`<div class="p-6 text-center text-gray-500">${t?"কোনো user পাওয়া যায়নি":"অন্য কেউ সাইন আপ করলে এখানে দেখা যাবে"}</div>`;
-$("users").querySelectorAll("button").forEach(b=>b.onclick=()=>openChat(users.find(u=>u.uid===b.dataset.id)));
-}
-$("search").oninput=renderUsers;
+let rec=null,voiceChunks=[];$("voice").onclick=async()=>{if(!active)return;if(!rec){try{let stream=await navigator.mediaDevices.getUserMedia({audio:true});rec=new MediaRecorder(stream);voiceChunks=[];rec.ondataavailable=e=>voiceChunks.push(e.data);rec.onstop=async()=>{let blob=new Blob(voiceChunks,{type:"audio/webm"}),r=ref(storage,`voice/${me.uid}/${Date.now()}.webm`);await uploadBytes(r,blob);send("", "voice",{url:await getDownloadURL(r)})};rec.start();$("voice").textContent="⏹️"}catch(e){alert("Microphone permission is required.")}}else{rec.stop();rec.stream.getTracks().forEach(t=>t.stop());rec=null;$("voice").textContent="🎤"}};
 
-function startUsers(){
-if(stopUsers)stopUsers();
-stopUsers=onSnapshot(collection(db,"users"),s=>{users=s.docs.map(x=>x.data()).filter(u=>u.uid!==me.uid);renderUsers()},e=>console.error(e));
-}
+$("back").onclick=()=>document.body.classList.remove("openchat");$("darkBtn").onclick=()=>{document.body.classList.toggle("dark");localStorage.dark=document.body.classList.contains("dark")?"1":"0"};if(localStorage.dark==="1")document.body.classList.add("dark");
 
-async function openChat(u){
-active=u;replyTo=null;
-$("chatName").textContent=u.name||"User";$("chatImg").src=avatar(u);
-$("chatStatus").textContent=u.online?"Online":"Offline";
-$("message").disabled=false;$("send").disabled=false;document.body.classList.add("chat-open");
-if(stopMessages)stopMessages();if(stopTyping)stopTyping();
-const q=query(collection(db,"chats",cid(me.uid,u.uid),"messages"),orderBy("createdAt","asc"));
-stopMessages=onSnapshot(q,s=>{allMessages=s.docs.map(x=>({id:x.id,...x.data()}));renderMessages()},
-e=>$("messages").innerHTML='<div class="text-center text-red-500 p-5">মেসেজ লোড করা যায়নি। Firestore Rules চেক করুন।</div>');
-startTypingListener();
-}
+$("profileBtn").onclick=()=>{$("modal").classList.remove("hidden");$("modalTitle").textContent="Profile";$("modalBody").innerHTML=`<p><b>${esc(me.displayName||"User")}</b></p><p>${esc(me.email)}</p><input id="newName" class="field" placeholder="New name"><input id="newPhoto" class="field" type="file" accept="image/*"><button id="saveProfile" class="primary">Save profile</button>`;$("saveProfile").onclick=async()=>{let n=$("newName").value.trim();if(n){await updateProfile(me,{displayName:n});await setDoc(doc(db,"users",me.uid),{name:n},{merge:true})}let f=$("newPhoto").files[0];if(f){let r=ref(storage,`profiles/${me.uid}/${Date.now()}_${f.name}`);await uploadBytes(r,f);let url=await getDownloadURL(r);await setDoc(doc(db,"users",me.uid),{photoURL:url},{merge:true})}alert("Profile saved.");$("modal").classList.add("hidden");location.reload()}};
+$("closeModal").onclick=()=>$("modal").classList.add("hidden");
 
-function renderMessages(){
-const term=$("messageSearch").value.trim().toLowerCase();$("messages").innerHTML="";
-allMessages.filter(m=>!term||String(m.text||"").toLowerCase().includes(term)).forEach(m=>drawMessage(m.id,m));
-$("messages").scrollTop=$("messages").scrollHeight;
-}
-
-function drawMessage(id,m){
-const mine=m.senderId===me.uid,w=document.createElement("div");w.className="message-row flex "+(mine?"justify-end":"justify-start")+" gap-2";
-const b=document.createElement("div");b.className="max-w-[78%] px-4 py-2 rounded-2xl "+(mine?"bg-blue-500 text-white":"bg-white dark:bg-gray-800 shadow");
-const tm=m.createdAt?.toDate?m.createdAt.toDate().toLocaleTimeString("bn-BD",{hour:"numeric",minute:"2-digit"}):"";
-const reply=m.replyText?`<div class="mb-1 text-xs opacity-70 border-l-2 pl-2">${esc(m.replyText)}</div>`:"";
-b.innerHTML=`${reply}<div class="whitespace-pre-wrap break-words">${esc(m.text)}</div><div class="text-[10px] opacity-60 text-right">${esc(tm+(m.edited?" · edited":""))}</div>`;
-const actions=document.createElement("div");actions.className="actions flex items-center gap-1 self-center";
-const rb=document.createElement("button");rb.className="text-gray-400";rb.innerHTML='<i class="fa-solid fa-reply"></i>';
-rb.onclick=()=>{replyTo={text:m.text};$("message").placeholder="Reply: "+m.text.slice(0,35);$("message").focus()};actions.appendChild(rb);
-if(mine){
-const eb=document.createElement("button");eb.className="text-gray-400";eb.innerHTML='<i class="fa-solid fa-pen"></i>';
-eb.onclick=async()=>{const n=prompt("মেসেজ পরিবর্তন করুন:",m.text);if(n!==null&&n.trim())await updateDoc(doc(db,"chats",cid(me.uid,active.uid),"messages",id),{text:n.trim(),edited:true,editedAt:serverTimestamp()})};actions.appendChild(eb);
-const dbtn=document.createElement("button");dbtn.className="text-gray-400";dbtn.innerHTML='<i class="fa-solid fa-trash"></i>';
-dbtn.onclick=async()=>{if(confirm("মেসেজ মুছবেন?"))await deleteDoc(doc(db,"chats",cid(me.uid,active.uid),"messages",id))};actions.appendChild(dbtn);
-}
-if(mine){w.appendChild(actions);w.appendChild(b)}else{w.appendChild(b);w.appendChild(actions)}$("messages").appendChild(w);
-}
-
-$("sendForm").onsubmit=async e=>{
-e.preventDefault();const t=$("message").value.trim();if(!t||!active)return;
-$("message").value="";
-const data={senderId:me.uid,receiverId:active.uid,text:t,createdAt:serverTimestamp()};
-if(replyTo)data.replyText=replyTo.text;
-try{await addDoc(collection(db,"chats",cid(me.uid,active.uid),"messages"),data);replyTo=null;$("message").placeholder="একটি মেসেজ লিখুন..."}catch(x){alert(x.message)}
-};
-
-$("message").oninput=async()=>{
-if(!active)return;
-try{await setDoc(doc(db,"typing",cid(me.uid,active.uid)),{uid:me.uid,typing:$("message").value.length>0,at:serverTimestamp()},{merge:true})}catch(_){}
-};
-
-function startTypingListener(){
-const ref=doc(db,"typing",cid(me.uid,active.uid));
-stopTyping=onSnapshot(ref,s=>{const d=s.data();$("typing").classList.toggle("hidden",!(d&&d.uid!==me.uid&&d.typing))});
-}
-
-$("back").onclick=()=>document.body.classList.remove("chat-open");
-$("chatSearchBtn").onclick=()=>{$("chatSearchBox").classList.toggle("hidden");if(!$("chatSearchBox").classList.contains("hidden"))$("messageSearch").focus()};
-$("messageSearch").oninput=renderMessages;
-$("emojiBtn").onclick=()=>$("emojiPanel").classList.toggle("hidden");
-$("emojiPanel").onclick=e=>{const x=e.target.textContent.trim();if(x.length){$("message").value+=x;$("message").focus()}};
-
-$("logout").onclick=async()=>{
-try{if(me)await setDoc(doc(db,"users",me.uid),{online:false,lastSeen:serverTimestamp()},{merge:true})}catch(_){}
-await signOut(auth);
-};
-
-$("dark").onclick=()=>{document.documentElement.classList.toggle("dark");localStorage.dark=document.documentElement.classList.contains("dark")?"1":"0"};
-if(localStorage.dark==="1")document.documentElement.classList.add("dark");
-
-$("profileBtn").onclick=async()=>{
-const d=(await getDoc(doc(db,"users",me.uid))).data()||{};
-$("profileName").value=d.name||"";$("profilePhoto").value=d.photoURL||"";$("profilePreview").src=avatar(d);
-$("profileModal").classList.remove("hidden");$("profileModal").classList.add("flex");
-};
-$("closeProfile").onclick=()=>{$("profileModal").classList.add("hidden");$("profileModal").classList.remove("flex")};
-$("profilePhoto").oninput=()=>{if($("profilePhoto").value.trim())$("profilePreview").src=$("profilePhoto").value.trim()};
-$("saveProfile").onclick=async()=>{
-const n=$("profileName").value.trim()||me.email.split("@")[0],p=$("profilePhoto").value.trim();
-await setDoc(doc(db,"users",me.uid),{uid:me.uid,name:n,email:me.email,photoURL:p},{merge:true});
-await updateProfile(me,{displayName:n,photoURL:p});$("meName").textContent=n;$("meImg").src=avatar({uid:me.uid,photoURL:p});
-$("closeProfile").click();
-};
-
-$("notifyBtn").onclick=async()=>{
-if(!("Notification"in window))return alert("এই browser Notification support করে না।");
-const p=await Notification.requestPermission();alert(p==="granted"?"Notification permission চালু হয়েছে।":"Notification permission দেওয়া হয়নি।");
-};
-
-onAuthStateChanged(auth,async u=>{
-if(u){$("auth").classList.add("hidden");$("app").classList.remove("hidden");try{await loadMe(u);startUsers()}catch(x){console.error(x);alert("Firebase Rules বা Firestore সেটিংস চেক করুন।")}}
-else{$("app").classList.add("hidden");$("auth").classList.remove("hidden");if(stopUsers)stopUsers();if(stopMessages)stopMessages();if(stopTyping)stopTyping();me=null;active=null}
-});
-
-window.addEventListener("beforeunload",()=>{if(me)setDoc(doc(db,"users",me.uid),{online:false,lastSeen:serverTimestamp()},{merge:true}).catch(()=>{})});
+$("privacyBtn").onclick=()=>{if(!localStorage.pin){let p=prompt("Create 4-6 digit Privacy PIN");if(p&&/^\d{4,6}$/.test(p)){localStorage.pin=p;alert("Privacy PIN saved.")}}else $("privacy").style.display="grid"};
+$("unlock").onclick=()=>{if($("unlockPin").value===localStorage.pin){$("privacy").style.display="none";$("unlockPin").value=""}else alert("Wrong PIN.")};
 </script>
-</body>
-</html>
+</body></html>
