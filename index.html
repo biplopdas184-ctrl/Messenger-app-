@@ -1,108 +1,233 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0084ff">
-<title>Messenger</title>
+<meta name="theme-color" content="#0866ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Messenger Pro">
+<title>Messenger Pro</title>
+
 <style>
-*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Arial,sans-serif}
-body{background:#fff;color:#111;overflow:hidden}button,input,textarea{font:inherit}
-button{border:0;cursor:pointer}.hidden{display:none!important}
-#auth{height:100%;display:grid;place-items:center;padding:20px}.authbox{width:min(400px,100%);text-align:center}
-.logo{width:72px;height:72px;border-radius:50%;background:#0084ff;color:#fff;display:grid;place-items:center;font-size:40px;font-weight:700;margin:auto auto 16px}
-.authbox h1{color:#0084ff;margin:0 0 8px}.authbox p{color:#666}.field{width:100%;padding:14px;border:1px solid #ddd;border-radius:12px;margin:6px 0;outline:none;background:#f5f6f7}
-.primary{width:100%;padding:14px;background:#0084ff;color:#fff;border-radius:12px;font-weight:700;margin-top:8px}
-.link{display:block;color:#0084ff;margin:15px 0;cursor:pointer}
-#app{height:100%;display:flex}.side{width:350px;border-right:1px solid #ddd;display:flex;flex-direction:column;background:#fff}
-.sidehead{padding:14px;display:flex;justify-content:space-between;align-items:center}.sidehead h2{margin:0;font-size:26px}
-.icon{width:40px;height:40px;border-radius:50%;background:#eee;margin-left:4px}.search{padding:0 14px 10px}.search input{width:100%;border:0;background:#f0f2f5;border-radius:22px;padding:12px 15px;outline:0}
-.me{display:flex;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid #eee}.avatar{width:48px;height:48px;border-radius:50%;background:#0084ff;color:#fff;display:grid;place-items:center;font-weight:700;overflow:hidden;flex:none}.avatar img{width:100%;height:100%;object-fit:cover}.meinfo{flex:1}.chatlist{overflow:auto;flex:1}.chatitem{display:flex;gap:10px;padding:11px 14px;align-items:center}.chatitem:hover,.chatitem.active{background:#f0f2f5}.chatinfo{min-width:0;flex:1}.chatinfo b,.chatinfo span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chatinfo span{font-size:13px;color:#666}
-.main{flex:1;display:flex;flex-direction:column;min-width:0}.chathead{height:70px;border-bottom:1px solid #ddd;display:flex;align-items:center;gap:10px;padding:10px 14px}.chatwho{flex:1}.online{font-size:12px;color:#31a24c}.messages{flex:1;overflow:auto;padding:18px;background:#fff}.msg{display:flex;margin:7px 0}.msg.mine{justify-content:flex-end}.bubble{max-width:min(78%,460px);background:#e4e6eb;border-radius:18px;padding:9px 13px;overflow-wrap:anywhere}.mine .bubble{background:#0084ff;color:#fff}.meta{font-size:10px;opacity:.65;margin-top:3px}.composer{display:flex;gap:7px;align-items:center;padding:9px;border-top:1px solid #ddd}.composer input{flex:1;border:0;background:#f0f2f5;border-radius:22px;padding:12px 15px;outline:0}.send{width:44px;height:44px;border-radius:50%;background:#0084ff;color:#fff}.file{display:none}
-.modal{position:fixed;inset:0;background:#0008;display:grid;place-items:center;padding:20px;z-index:20}.modalbox{width:min(420px,100%);background:#fff;border-radius:18px;padding:20px;max-height:90vh;overflow:auto}.modalbox h3{margin-top:0}
-#privacy{position:fixed;inset:0;background:#fff;z-index:30;display:none;place-items:center;padding:20px;text-align:center}.privacybox{width:min(360px,100%)}
-.dark{background:#18191a;color:#eee}.dark #app,.dark .side,.dark .main,.dark .messages,.dark #auth,.dark .modalbox,.dark #privacy{background:#18191a;color:#eee}.dark .search input,.dark .composer input,.dark .icon{background:#3a3b3c;color:#fff}.dark .chatitem:hover,.dark .chatitem.active{background:#303030}.dark .bubble{background:#3a3b3c}.dark .chathead,.dark .composer,.dark .side,.dark .me{border-color:#3a3b3c}
-@media(max-width:700px){.side{width:100%}.main{display:none}.openchat .side{display:none}.openchat .main{display:flex}.mobileback{display:block!important}}
-@media(min-width:701px){.mobileback{display:none}}
+:root{
+  --blue:#0866ff;--blue2:#1877f2;--bg:#f0f2f5;--card:#fff;--text:#050505;
+  --muted:#65676b;--border:#dddfe2;--bubble:#e4e6eb;--input:#f0f2f5;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+button,input{font:inherit}
+button{border:0;cursor:pointer}
+.app{height:100dvh;display:flex;overflow:hidden}
+.sidebar{width:360px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.top{padding:16px 16px 10px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:28px;font-weight:800;color:var(--blue)}
+.iconbtn{width:40px;height:40px;border-radius:50%;background:var(--input);display:grid;place-items:center;font-size:20px}
+.row{display:flex;align-items:center;gap:12px}
+.search{margin:0 16px 12px;background:var(--input);border-radius:22px;padding:10px 14px;display:flex;gap:9px;align-items:center}
+.search input{border:0;outline:0;background:transparent;width:100%;font-size:15px}
+.tabs{display:flex;padding:0 10px 8px;gap:5px}
+.tab{flex:1;background:transparent;padding:10px;border-radius:10px;font-weight:700;color:var(--muted)}
+.tab.active{background:#e7f3ff;color:var(--blue)}
+.chats{overflow:auto;flex:1;padding:4px 8px}
+.chat{display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:12px}
+.chat:hover,.chat.selected{background:#f2f3f5}
+.avatar{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--blue);color:white;font-weight:700;font-size:20px;flex:none;position:relative}
+.online{position:absolute;right:1px;bottom:1px;width:14px;height:14px;background:#31a24c;border:3px solid white;border-radius:50%}
+.chatmain{min-width:0;flex:1}
+.name{font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.preview{font-size:14px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.time{font-size:12px;color:var(--muted)}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--card)}
+.empty{margin:auto;text-align:center;color:var(--muted)}
+.empty .big{font-size:64px}
+.header{height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:12px}
+.header .avatar{width:42px;height:42px;font-size:16px}
+.back{display:none}
+.headerinfo{flex:1}
+.headername{font-weight:800}
+.status{font-size:13px;color:#31a24c;margin-top:2px}
+.actions{display:flex;gap:7px}
+.messages{flex:1;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:6px;background:#fff}
+.day{text-align:center;color:var(--muted);font-size:12px;margin:5px 0 12px}
+.msgrow{display:flex}
+.msgrow.me{justify-content:flex-end}
+.bubble{max-width:min(72%,520px);padding:10px 13px;border-radius:18px;background:var(--bubble);font-size:15px;line-height:1.35;word-wrap:break-word}
+.me .bubble{background:var(--blue);color:white;border-bottom-right-radius:5px}
+.msgmeta{font-size:10px;color:var(--muted);margin:2px 7px}
+.me .msgmeta{text-align:right}
+.composer{padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
+.composeinput{flex:1;background:var(--input);border:0;outline:0;border-radius:22px;padding:12px 15px}
+.send{width:44px;height:44px;border-radius:50%;background:var(--blue);color:#fff;font-size:20px}
+.login{position:fixed;inset:0;background:linear-gradient(135deg,#e7f3ff,#fff);display:grid;place-items:center;z-index:20;padding:20px}
+.loginbox{width:min(410px,100%);background:white;border-radius:20px;padding:28px;box-shadow:0 15px 45px #0002}
+.loginbox h1{color:var(--blue);margin:0 0 6px}
+.loginbox p{color:var(--muted)}
+.field{width:100%;padding:13px;border:1px solid var(--border);border-radius:10px;margin:7px 0;outline:0}
+.primary{width:100%;padding:13px;border-radius:10px;background:var(--blue);color:white;font-weight:700;margin-top:8px}
+.secondary{width:100%;padding:12px;border-radius:10px;background:#e7f3ff;color:var(--blue);font-weight:700;margin-top:8px}
+.hide{display:none!important}
+.profile{position:fixed;inset:0;background:#0007;z-index:10;display:none;align-items:flex-end}
+.profile.show{display:flex}
+.sheet{background:white;width:100%;max-width:600px;margin:auto;border-radius:22px;padding:22px}
+.sheet h2{margin-top:0}
+@media(max-width:700px){
+  .sidebar{width:100%;border-right:0}
+  .main{display:none}
+  .app.chat-open .sidebar{display:none}
+  .app.chat-open .main{display:flex}
+  .back{display:grid}
+  .header{height:64px}
+}
+@media(min-width:701px){.sidebar{display:flex!important}.back{display:none!important}}
+.dark{--bg:#18191a;--card:#242526;--text:#e4e6eb;--muted:#b0b3b8;--border:#3e4042;--bubble:#3a3b3c;--input:#3a3b3c}
+.dark .messages{background:#18191a}.dark .login{background:#18191a}.dark .loginbox,.dark .sheet{background:#242526}
+.dark .online{border-color:#242526}.dark .chat:hover,.dark .chat.selected{background:#303132}
 </style>
 </head>
+
 <body>
-<div id="auth">
-<div class="authbox">
-<div class="logo">M</div><h1>Messenger</h1><p>Firebase Messenger</p>
-<div id="loginBox">
-<input id="email" class="field" type="email" placeholder="Email">
-<input id="password" class="field" type="password" placeholder="Password">
-<button id="login" class="primary">Log in</button>
-<span id="forgot" class="link">Forgot password?</span><span id="toSignup" class="link">Create new account</span>
+<div id="login" class="login">
+  <div class="loginbox">
+    <h1>Messenger</h1>
+    <p>Sign in to your Messenger account</p>
+    <input id="email" class="field" type="email" placeholder="Email">
+    <input id="password" class="field" type="password" placeholder="Password">
+    <button class="primary" onclick="demoLogin()">Log In</button>
+    <button class="secondary" onclick="createDemoAccount()">Create new account</button>
+    <p id="loginMsg" style="font-size:13px"></p>
+  </div>
 </div>
-<div id="signupBox" class="hidden">
-<input id="name" class="field" placeholder="Name">
-<input id="sEmail" class="field" type="email" placeholder="Email">
-<input id="sPassword" class="field" type="password" placeholder="Password (6+ characters)">
-<button id="signup" class="primary">Sign up</button><span id="toLogin" class="link">Already have an account?</span>
+
+<div id="app" class="app">
+  <aside class="sidebar">
+    <div class="top">
+      <div class="logo">Messenger</div>
+      <div class="row">
+        <button class="iconbtn" onclick="openProfile()">👤</button>
+        <button class="iconbtn" onclick="toggleDark()">🌙</button>
+      </div>
+    </div>
+    <div class="search">🔎 <input id="search" placeholder="Search Messenger" oninput="filterChats()"></div>
+    <div class="tabs">
+      <button class="tab active">Chats</button>
+      <button class="tab">People</button>
+      <button class="tab">Groups</button>
+    </div>
+    <div id="chatList" class="chats"></div>
+  </aside>
+
+  <main class="main">
+    <div id="empty" class="empty">
+      <div class="big">💬</div>
+      <h2>Your messages</h2>
+      <p>Select a chat to start messaging.</p>
+    </div>
+
+    <section id="chatPanel" class="hide" style="display:flex;flex-direction:column;height:100%">
+      <header class="header">
+        <button class="iconbtn back" onclick="closeChat()">‹</button>
+        <div id="chatAvatar" class="avatar">B<span class="online"></span></div>
+        <div class="headerinfo">
+          <div id="chatName" class="headername">Baby</div>
+          <div id="chatStatus" class="status">Active now</div>
+        </div>
+        <div class="actions">
+          <button class="iconbtn">📞</button>
+          <button class="iconbtn">🎥</button>
+          <button class="iconbtn">ⓘ</button>
+        </div>
+      </header>
+      <div id="messages" class="messages"></div>
+      <div class="composer">
+        <button class="iconbtn">＋</button>
+        <button class="iconbtn">🖼️</button>
+        <input id="messageInput" class="composeinput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()">
+        <button class="send" onclick="sendMessage()">➤</button>
+      </div>
+    </section>
+  </main>
 </div>
-</div></div>
 
-<div id="app" class="hidden">
-<aside class="side">
-<div class="sidehead"><h2>Chats</h2><div><button class="icon" id="profileBtn">👤</button><button class="icon" id="privacyBtn">🔒</button><button class="icon" id="darkBtn">🌙</button></div></div>
-<div class="search"><input id="search" placeholder="Search users"></div>
-<div class="me"><div class="avatar" id="myAvatar">U</div><div class="meinfo"><b id="myName">User</b><small>Active</small></div><button class="icon" id="logout">↪</button></div>
-<div id="chatlist" class="chatlist"></div>
-</aside>
-<main class="main">
-<div class="chathead"><button id="back" class="icon mobileback">←</button><div class="avatar" id="chatAvatar">?</div><div class="chatwho"><b id="chatName">Select a user</b><div id="chatPresence" class="online"></div><small id="typing"></small></div><button class="icon" title="Voice">📞</button><button class="icon" title="Video">🎥</button></div>
-<div id="messages" class="messages"><div style="text-align:center;color:#777;margin-top:30vh">Search a user to start a chat.</div></div>
-<div class="composer"><label class="icon">📷<input id="image" class="file" type="file" accept="image/*"></label><label class="icon">📎<input id="file" class="file" type="file"></label><button class="icon" id="voice">🎤</button><input id="text" placeholder="Type a message..." disabled><button id="send" class="send" disabled>➤</button></div>
-</main></div>
+<div id="profile" class="profile" onclick="if(event.target===this)closeProfile()">
+  <div class="sheet">
+    <h2>Profile</h2>
+    <p><b>Name:</b> My Messenger Account</p>
+    <p><b>Status:</b> Online</p>
+    <button class="primary" onclick="logout()">Log out</button>
+    <button class="secondary" onclick="closeProfile()">Close</button>
+  </div>
+</div>
 
-<div id="modal" class="modal hidden"><div class="modalbox"><h3 id="modalTitle">Profile</h3><div id="modalBody"></div><button id="closeModal" class="primary">Close</button></div></div>
-<div id="privacy" class="privacybox"><div class="logo">🔒</div><h2>Privacy Mode</h2><p>App locked</p><input id="unlockPin" class="field" inputmode="numeric" maxlength="6" placeholder="PIN"><button id="unlock" class="primary">Unlock</button></div>
+<script>
+const chats=[
+ {id:1,name:"Baby",initial:"B",status:"Active now",preview:"Hello! How are you?",time:"2:56 PM",online:true},
+ {id:2,name:"Messenger Team",initial:"M",status:"Active 10m ago",preview:"Welcome to Messenger",time:"1:42 PM",online:false},
+ {id:3,name:"Family Group",initial:"F",status:"5 members",preview:"See you tonight",time:"12:20 PM",online:false}
+];
+let current=null;
+const messages={
+  1:[
+   {me:false,text:"Hello! 👋",time:"2:54 PM"},
+   {me:true,text:"Hi! How are you?",time:"2:55 PM"},
+   {me:false,text:"I'm good. Nice to see you here!",time:"2:56 PM"}
+  ],
+  2:[{me:false,text:"Welcome to Messenger Pro.",time:"1:42 PM"}],
+  3:[{me:false,text:"See you tonight everyone!",time:"12:20 PM"}]
+};
 
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import{getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,sendPasswordResetEmail,updateProfile}from"https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-import{getFirestore,collection,doc,setDoc,getDoc,query,where,orderBy,onSnapshot,addDoc,serverTimestamp,limit,updateDoc}from"https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-import{getStorage,ref,uploadBytes,getDownloadURL}from"https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
-
-const firebaseConfig={apiKey:"AIzaSyBLw3kGNaKB9JCzN_mW8sS1Yv7cpp6SvhU",authDomain:"messenger-app-2e8b1.firebaseapp.com",projectId:"messenger-app-2e8b1",storageBucket:"messenger-app-2e8b1.firebasestorage.app",messagingSenderId:"913049885136",appId:"1:913049885136:web:cc07e7ee59faaee91b41d5",measurementId:"G-ED5NDMYXRS"};
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),storage=getStorage(app);
-const $=x=>document.getElementById(x);let me=null,active=null,unsubUsers=null,unsubMsgs=null,unsubPresence=null,unsubTyping=null;
-const esc=s=>{let d=document.createElement("div");d.textContent=s??"";return d.innerHTML};const cid=(a,b)=>[a,b].sort().join("_");
-
-$("toSignup").onclick=()=>{$("loginBox").classList.add("hidden");$("signupBox").classList.remove("hidden")};
-$("toLogin").onclick=()=>{$("signupBox").classList.add("hidden");$("loginBox").classList.remove("hidden")};
-$("signup").onclick=async()=>{try{let n=$("name").value.trim(),e=$("sEmail").value.trim(),p=$("sPassword").value;if(!n||!e||p.length<6)return alert("Fill all fields. Password must be 6+ characters.");let c=await createUserWithEmailAndPassword(auth,e,p);await updateProfile(c.user,{displayName:n});await setDoc(doc(db,"users",c.user.uid),{uid:c.user.uid,name:n,email:e,online:true,createdAt:serverTimestamp()},{merge:true})}catch(e){alert(e.message)}};
-$("login").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(e){alert(e.message)}};
-$("forgot").onclick=async()=>{let e=$("email").value.trim();if(!e)return alert("Enter email first.");try{await sendPasswordResetEmail(auth,e);alert("Password reset email sent.")}catch(x){alert(x.message)}};
-$("logout").onclick=()=>signOut(auth);
-
-onAuthStateChanged(auth,async u=>{if(!u){me=null;$("auth").classList.remove("hidden");$("app").classList.add("hidden");return}me=u;$("auth").classList.add("hidden");$("app").classList.remove("hidden");$("myName").textContent=u.displayName||u.email;$("myAvatar").textContent=(u.displayName||u.email)[0].toUpperCase();await setDoc(doc(db,"users",u.uid),{uid:u.uid,name:u.displayName||"User",email:u.email,online:true,lastSeen:serverTimestamp()},{merge:true});listenUsers();});
-window.addEventListener("beforeunload",()=>{if(me)setDoc(doc(db,"users",me.uid),{online:false,lastSeen:serverTimestamp()},{merge:true})});
-
-function listenUsers(){if(unsubUsers)unsubUsers();unsubUsers=onSnapshot(query(collection(db,"users"),limit(100)),s=>{let t=$("search").value.toLowerCase();$("chatlist").innerHTML="";s.forEach(d=>{let u=d.data();if(u.uid===me.uid)return;if(t&&!((u.name||"")+" "+(u.email||"")).toLowerCase().includes(t))return;let x=document.createElement("div");x.className="chatitem";x.innerHTML=`<div class="avatar">${esc((u.name||u.email||"?")[0].toUpperCase())}</div><div class="chatinfo"><b>${esc(u.name||"User")}</b><span>${esc(u.email||"")}</span></div>`;x.onclick=()=>openChat(u);$("chatlist").appendChild(x)})})}
-$("search").oninput=listenUsers;
-
-async function openChat(u){active=u;document.body.classList.add("openchat");$("chatName").textContent=u.name||u.email;$("chatAvatar").textContent=(u.name||u.email)[0].toUpperCase();$("text").disabled=false;$("send").disabled=false;if(unsubMsgs)unsubMsgs();if(unsubPresence)unsubPresence();if(unsubTyping)unsubTyping();
-unsubPresence=onSnapshot(doc(db,"users",u.uid),d=>{let x=d.data()||{};$("chatPresence").textContent=x.online?"● Online":(x.lastSeen?"Last seen recently":"Offline")});
-let q=query(collection(db,"chats",cid(me.uid,u.uid),"messages"),orderBy("createdAt","asc"),limit(300));unsubMsgs=onSnapshot(q,s=>{$("messages").innerHTML="";s.forEach(d=>render(d.id,d.data()));$("messages").scrollTop=$("messages").scrollHeight})}
-function render(id,m){let r=document.createElement("div");r.className="msg"+(m.senderId===me.uid?" mine":"");let b=document.createElement("div");b.className="bubble";if(m.type==="image"){let im=document.createElement("img");im.src=m.url;im.style.maxWidth="240px";im.style.borderRadius="14px";b.appendChild(im)}else if(m.type==="file"){let a=document.createElement("a");a.href=m.url;a.target="_blank";a.textContent="📎 "+(m.name||"File");a.style.color="inherit";b.appendChild(a)}else if(m.type==="voice"){b.textContent="🎤 Voice message"}else b.textContent=m.text||"";let meta=document.createElement("div");meta.className="meta";meta.textContent=m.senderId===me.uid?(m.seen?"✓✓ Seen":m.delivered?"✓✓ Delivered":"✓ Sent"):"";b.appendChild(meta);if(m.senderId===me.uid){b.ondblclick=async()=>{if(confirm("Delete this message?"))await setDoc(doc(db,"chats",cid(me.uid,active.uid),"messages",id),{...m,deleted:true,text:"Message deleted"})}}r.appendChild(b);$("messages").appendChild(r)}
-
-async function send(text,type="text",extra={}){if(!active||(!text&&!extra.url))return;await addDoc(collection(db,"chats",cid(me.uid,active.uid),"messages"),{senderId:me.uid,receiverId:active.uid,text:text||"",type,delivered:false,seen:false,createdAt:serverTimestamp(),...extra})}
-$("send").onclick=()=>{let t=$("text").value.trim();if(t){$("text").value="";send(t)}};
-$("text").onkeydown=e=>{if(e.key==="Enter")$("send").click()};
-$("image").onchange=async e=>{let f=e.target.files[0];if(!f||!active)return;try{let r=ref(storage,`chatImages/${me.uid}/${Date.now()}_${f.name}`);await uploadBytes(r,f);send("", "image",{url:await getDownloadURL(r),name:f.name})}catch(x){alert(x.message)}e.target.value=""};
-$("file").onchange=async e=>{let f=e.target.files[0];if(!f||!active)return;try{let r=ref(storage,`chatFiles/${me.uid}/${Date.now()}_${f.name}`);await uploadBytes(r,f);send("", "file",{url:await getDownloadURL(r),name:f.name})}catch(x){alert(x.message)}e.target.value=""};
-
-let rec=null,voiceChunks=[];$("voice").onclick=async()=>{if(!active)return;if(!rec){try{let stream=await navigator.mediaDevices.getUserMedia({audio:true});rec=new MediaRecorder(stream);voiceChunks=[];rec.ondataavailable=e=>voiceChunks.push(e.data);rec.onstop=async()=>{let blob=new Blob(voiceChunks,{type:"audio/webm"}),r=ref(storage,`voice/${me.uid}/${Date.now()}.webm`);await uploadBytes(r,blob);send("", "voice",{url:await getDownloadURL(r)})};rec.start();$("voice").textContent="⏹️"}catch(e){alert("Microphone permission is required.")}}else{rec.stop();rec.stream.getTracks().forEach(t=>t.stop());rec=null;$("voice").textContent="🎤"}};
-
-$("back").onclick=()=>document.body.classList.remove("openchat");$("darkBtn").onclick=()=>{document.body.classList.toggle("dark");localStorage.dark=document.body.classList.contains("dark")?"1":"0"};if(localStorage.dark==="1")document.body.classList.add("dark");
-
-$("profileBtn").onclick=()=>{$("modal").classList.remove("hidden");$("modalTitle").textContent="Profile";$("modalBody").innerHTML=`<p><b>${esc(me.displayName||"User")}</b></p><p>${esc(me.email)}</p><input id="newName" class="field" placeholder="New name"><input id="newPhoto" class="field" type="file" accept="image/*"><button id="saveProfile" class="primary">Save profile</button>`;$("saveProfile").onclick=async()=>{let n=$("newName").value.trim();if(n){await updateProfile(me,{displayName:n});await setDoc(doc(db,"users",me.uid),{name:n},{merge:true})}let f=$("newPhoto").files[0];if(f){let r=ref(storage,`profiles/${me.uid}/${Date.now()}_${f.name}`);await uploadBytes(r,f);let url=await getDownloadURL(r);await setDoc(doc(db,"users",me.uid),{photoURL:url},{merge:true})}alert("Profile saved.");$("modal").classList.add("hidden");location.reload()}};
-$("closeModal").onclick=()=>$("modal").classList.add("hidden");
-
-$("privacyBtn").onclick=()=>{if(!localStorage.pin){let p=prompt("Create 4-6 digit Privacy PIN");if(p&&/^\d{4,6}$/.test(p)){localStorage.pin=p;alert("Privacy PIN saved.")}}else $("privacy").style.display="grid"};
-$("unlock").onclick=()=>{if($("unlockPin").value===localStorage.pin){$("privacy").style.display="none";$("unlockPin").value=""}else alert("Wrong PIN.")};
+function renderChats(list=chats){
+ const box=document.getElementById('chatList');
+ box.innerHTML=list.map(c=>`
+ <div class="chat ${current===c.id?'selected':''}" onclick="openChat(${c.id})">
+   <div class="avatar">${c.initial}${c.online?'<span class="online"></span>':''}</div>
+   <div class="chatmain"><div class="name">${c.name}</div><div class="preview">${c.preview}</div></div>
+   <div class="time">${c.time}</div>
+ </div>`).join('');
+}
+function openChat(id){
+ current=id;const c=chats.find(x=>x.id===id);
+ document.getElementById('empty').classList.add('hide');
+ document.getElementById('chatPanel').classList.remove('hide');
+ document.getElementById('chatName').textContent=c.name;
+ document.getElementById('chatStatus').textContent=c.status;
+ document.getElementById('chatAvatar').innerHTML=c.initial+(c.online?'<span class="online"></span>':'');
+ renderMessages();renderChats();document.getElementById('app').classList.add('chat-open');
+}
+function closeChat(){document.getElementById('app').classList.remove('chat-open')}
+function renderMessages(){
+ const box=document.getElementById('messages');
+ box.innerHTML='<div class="day">Today</div>'+ (messages[current]||[]).map(m=>`
+ <div class="msgrow ${m.me?'me':''}"><div><div class="bubble">${escapeHtml(m.text)}</div><div class="msgmeta">${m.time}${m.me?' · Seen':''}</div></div></div>`).join('');
+ box.scrollTop=box.scrollHeight;
+}
+function sendMessage(){
+ const input=document.getElementById('messageInput');const text=input.value.trim();
+ if(!text||!current)return;
+ const now=new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+ (messages[current]??=[]).push({me:true,text,time:now});
+ const c=chats.find(x=>x.id===current);c.preview=text;c.time=now;
+ input.value='';renderMessages();renderChats();
+}
+function filterChats(){
+ const q=document.getElementById('search').value.toLowerCase();
+ renderChats(chats.filter(c=>c.name.toLowerCase().includes(q)));
+}
+function toggleDark(){document.body.classList.toggle('dark');localStorage.setItem('dark',document.body.classList.contains('dark'))}
+if(localStorage.getItem('dark')==='true')document.body.classList.add('dark');
+function openProfile(){document.getElementById('profile').classList.add('show')}
+function closeProfile(){document.getElementById('profile').classList.remove('show')}
+function logout(){document.getElementById('profile').classList.remove('show');document.getElementById('login').classList.remove('hide')}
+function demoLogin(){
+ const email=document.getElementById('email').value.trim(),pass=document.getElementById('password').value;
+ if(!email||!pass){document.getElementById('loginMsg').textContent='Enter email and password.';return}
+ document.getElementById('login').classList.add('hide');
+}
+function createDemoAccount(){
+ document.getElementById('loginMsg').textContent='Demo account screen ready. Connect Firebase Authentication for real accounts.';
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+renderChats();
 </script>
-</body></html>
+</body>
+</html>
